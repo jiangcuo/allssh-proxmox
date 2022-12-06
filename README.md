@@ -5,6 +5,20 @@ allssh is a small program to run a shell command on multiple hosts over ssh.  Th
 The program is implemented in a single file with (AFAIK) no dependencies other than perl. There is no need to install or configure anything to use it.
 
 
+### Usage for Proxmox VE
+
+    $ allssh --init
+    created allssh conf 
+    you can use cmd "./allssh @CLUSTER hostname" 
+    $ ./allssh @CLUSTER hostname
+    Hosts: 10.13.14.151 10.13.14.152 10.13.14.153 10.13.14.154
+    Command: hostname
+    10.13.14.151 : pve1
+    10.13.14.152 : pve2
+    10.13.14.153 : pve3
+    10.13.14.154 : pve4
+
+
 ### Usage
 
     $ allssh [opts] <hosts_spec> [command]
