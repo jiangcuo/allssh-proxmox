@@ -14,6 +14,10 @@ use Term::ANSIColor qw(:constants);
 use Time::HiRes qw(gettimeofday);
 use List::Util ();
 
+use PVE::INotify;
+use PVE::Cluster;
+use PVE::CLI::pvecm;
+
 use constant USAGE =><<USAGE ;
 usage:  allssh [opts] <host_spec> [command]
 
@@ -202,7 +206,7 @@ sub ExpandHostRange
 
 sub LoadRcFile
 {
-  my $rc_file = $ENV{ALLSSHRC} // "$ENV{HOME}/.allsshrc";
+  my $rc_file = "$ENV{HOME}/.allsshrc";
 
   return unless (-e $rc_file);
 
@@ -562,7 +566,7 @@ sub ParallelExec
 # MAIN
 #==============================================================================
 
-GetOptions(\%O, "help|h", "dry_run|dry-run|d", "wait!", "separator|p=s",
+GetOptions(\%O, "help|h", "init", "dry_run|dry-run|d", "wait!", "separator|p=s",
                 "exit_value|exit-value|e=s", "dedup!", "times!", "timeout|t=i",
                 "add_host_keys|add-host-keys", "color|c=s", "sort|s=s",
                 "times!", "timeout=i", "output|o=s", "user|u=s", "number|n=i",
@@ -577,6 +581,23 @@ elsif ($O{help}) {
   print USAGE;
   exit 0;
 }
+elsif ($O{init}) {
+  PVE::Corosync::check_conf_exists();
+  my $conf = PVE::Cluster::cfs_read_file("corosync.conf");
+  my $clustername = $conf->{main}->{totem}->{cluster_name};
+  $clustername = uc($clustername);
+  my $rc_file  = "$ENV{HOME}/.allsshrc";
+  system("echo [$clustername] > $rc_file");
+  my $cmd = "pvecm status |grep 0x|grep -v Node|awk '{print \$3}'";
+  system("$cmd >> $rc_file");
+  my $nodename = PVE::INotify::nodename();
+  print "created allssh conf \n";
+  print "you can use cmd \"./allssh \@$clustername hostname\" \n";
+  exit 0;
+}
+
+
+
 
 # normalize flags
 #
