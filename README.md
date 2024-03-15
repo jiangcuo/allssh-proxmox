@@ -7,17 +7,7 @@ The program is implemented in a single file with (AFAIK) no dependencies other t
 
 ### Usage for Proxmox VE
 
-    $ allssh --init
-    created allssh conf 
-    you can use cmd "./allssh @CLUSTER hostname" 
-    $ ./allssh @CLUSTER hostname
-    Hosts: 10.13.14.151 10.13.14.152 10.13.14.153 10.13.14.154
-    Command: hostname
-    10.13.14.151 : pve1
-    10.13.14.152 : pve2
-    10.13.14.153 : pve3
-    10.13.14.154 : pve4
-
+    $ pvessh  [command]
 
 ### Usage
 

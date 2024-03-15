@@ -581,21 +581,6 @@ elsif ($O{help}) {
   print USAGE;
   exit 0;
 }
-elsif ($O{init}) {
-  PVE::Corosync::check_conf_exists();
-  my $conf = PVE::Cluster::cfs_read_file("corosync.conf");
-  my $clustername = $conf->{main}->{totem}->{cluster_name};
-  $clustername = uc($clustername);
-  my $rc_file  = "$ENV{HOME}/.allsshrc";
-  system("echo [$clustername] > $rc_file");
-  my $cmd = "pvecm status |grep 0x|grep -v Node|awk '{print \$3}'";
-  system("$cmd >> $rc_file");
-  my $nodename = PVE::INotify::nodename();
-  print "created allssh conf \n";
-  print "you can use cmd \"./allssh \@$clustername hostname\" \n";
-  exit 0;
-}
-
 
 
 
@@ -645,24 +630,8 @@ if ($C{input} && ($C{input} eq "-" || $C{input} eq "/dev/stdin")) {
 
 # generate host list
 #
-my $hosts = shift @ARGV;
-unless ($hosts) {
-  Fatal("no hosts specified");
-}
-
-my @hosts = ExpandHostSpec($hosts);
-unless (@hosts) {
-  Fatal("could not determine host list");
-}
-
-if ($C{number}) {
-  if ($C{number} > @hosts) {
-    Fatal("--number value is greater than number of unique hosts");
-  }
-  else {
-    @hosts = RandomHosts(\@hosts, $C{number});
-  }
-}
+my $hostlist = qx{pvecm status |grep 0x|grep -v Node|awk '{print \$3}'};
+my @hosts = split("\n", $hostlist); 
 
 # set colors, if any
 #

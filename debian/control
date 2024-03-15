@@ -1,0 +1,12 @@
+Source: pvessh
+Section: admin
+Priority: optional
+Build-Depends: debhelper-compat (= 13),
+Maintainer: Lierfang Team <service@lierfang.com>
+Standards-Version: 1.0
+
+Package: pvessh
+Architecture: all
+Depends: proxmox-ve, 
+	 ${misc:Depends}
+Description: all ssh for proxmox ve
