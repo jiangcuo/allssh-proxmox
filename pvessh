@@ -477,7 +477,7 @@ sub SshCommand
   my @command = qw( ssh -aTx -o BatchMode=yes
                              -o PreferredAuthentications=publickey
                              -o PasswordAuthentication=no );
-  push @command, qw(-o StrictHostKeyChecking=no) if ($C{add_host_keys});
+  push @command, qw(-o StrictHostKeyChecking=no);
   push @command, qw(-q) if ($C{quiet});
   push @command, qw(-n) if (not $C{input});
   push @command, "$user$host", TransformCommand($host, $command);
